@@ -1,0 +1,186 @@
+syntax = "proto3";
+
+package com.nvidia.nvlink5;
+
+option java_multiple_files = true;
+option java_package = "com.nvidia.nvlink5";
+option java_outer_classname = "NVLink5Proto";
+
+
+enum NodeType {
+  CHANNEL_ADAPTER = 0;
+  SWITCH = 1;
+  ROUTER = 2;
+  GPU = 3;
+
+}
+
+enum Link0DownPolicy {
+  Isolate = 0;
+  ReRoute = 1;
+}
+
+
+enum PartitionManagerStatus {
+  PTM_NotReady = 0;
+  PTM_Ready = 1;
+  PTM_PendingCreate = 2;
+  PTM_PendingDelete = 3;
+  PTM_PendingUpdate = 4;
+  PTM_PendingReroute = 5;
+  PTM_PendingIsolate = 6;
+
+}
+
+enum SubnetManagerStatus {
+  SM_Unconfigured = 0;
+  SM_PartitionConfigOk = 1;
+  SM_PendingPartitionConfig = 2;
+  SM_PendingBasicConfig = 3;
+  SM_BasicConfigOK = 4;
+  SM_PendingReroute = 5;
+  SM_RerouteFailed = 6;
+  SM_Isolated = 7;
+}
+
+enum FabricManagerStatus {
+  FM_Unconfigured = 0;
+  FM_PartitionConfigOk = 2;
+  FM_PendingPartitionConfig = 3;
+  FM_PendingHalt = 4;
+  FM_HaltFailed = 5;
+  FM_PendimResume = 6;
+  FM_ResumeFailed = 7;
+}
+
+enum NetworkStatus {
+  NS_OK = 0;
+  NS_Degraded = 2;
+  NS_Faulty = 3;
+  NS_Fatal = 4;
+
+}
+
+enum NodeNetworkStatus {
+  NNS_OK = 0;
+  NNS_Unreachable = 2;
+  NNS_Degraded = 3;
+  NNS_Isolated = 4;
+  NNS_L1Affected = 5;
+  NNS_L2Affected = 6;
+}
+
+enum NodeFabricStatus {
+  NFS_OK = 0;
+  NFS_Faulty = 2;
+  NFS_Halted = 3;
+  NFS_Fatal = 4;
+}
+
+enum LinkType {
+  Access = 0;
+  Truck = 1;
+}
+
+enum PortStatus {
+  PS_UP = 0;
+  PS_DOWN = 1;
+}
+
+enum Status {
+  OK = 0;
+  ERROR = 2;
+  NON_FATAL_ERROR = 3;
+  FATAL_ERROR = 4;
+}
+
+
+
+// messages
+
+message Void {}
+
+message ResponseStatusMessage {
+  Status status = 1;
+  optional string uuid = 2;
+  optional string transaction_id = 3;
+}
+
+message Port {
+  optional string uuid = 1;
+  optional PortStatus portStatus = 2;
+  optional uint32 p_key = 3;
+  optional Port neighbor = 4;
+}
+
+message Node {
+  optional string uuid = 1;
+  optional string sys_name = 2;
+  optional NodeType node_type = 3;
+  optional PartitionManagerStatus ptm_status = 4;
+  optional SubnetManagerStatus sm_status = 5;
+  optional FabricManagerStatus fm_status = 6;
+  optional NodeNetworkStatus node_network_status = 7;
+  optional NodeFabricStatus node_fabric_status = 8;
+  repeated Port port_list = 9;
+}
+
+message NodeList {
+  repeated Node node_list = 1;
+}
+
+message Partition {
+  optional string uuid = 1;
+  optional uint32 p_key = 2;
+  optional PartitionManagerStatus pm_status = 3;
+  repeated Node node_list =  4;
+  optional Link0DownPolicy link0_down_policy = 5;
+
+}
+
+
+message PartitionResponse {
+  Status status = 1;
+  repeated Partition partition_list = 2;
+}
+
+
+service NetworkInformationBaseService {
+
+  rpc create(Partition) returns (ResponseStatusMessage);
+  rpc delete(Partition) returns (ResponseStatusMessage);
+
+  rpc notify(NodeList) returns (ResponseStatusMessage);
+}
+
+service SubnetManagerService {
+
+  rpc get_node(Node) returns (Node);
+  rpc get_port(Port) returns (Port);
+  rpc get_all(Void) returns (NodeList);
+
+  rpc create(Partition) returns (ResponseStatusMessage);
+  rpc delete(Partition) returns (ResponseStatusMessage);
+
+  rpc subscribe(Void) returns (stream NodeList);
+
+}
+
+
+
+service FabricManagerService {
+
+  rpc add(NodeList) returns (ResponseStatusMessage);
+
+  rpc create(Partition) returns (ResponseStatusMessage);
+  rpc delete(Partition) returns (ResponseStatusMessage);
+
+  rpc subscribe(Void) returns (stream NodeList);
+
+}
+
+
+
+
+
+
