@@ -1,6 +1,6 @@
 package com.nvidia.web;
 
-import com.nvidia.controller.TopologyController;
+import com.nvidia.controller.NodeEntityController;
 import com.nvidia.model.NodeEntity;
 import com.nvidia.model.PortEntity;
 import com.nvidia.model.Status;
@@ -13,28 +13,28 @@ import java.util.List;
 public class TopologyWebController {
 
     @Autowired
-    TopologyController topologyController;
+    NodeEntityController nodeEntityController;
 
     @GetMapping("/topology/port")
     public List<PortEntity> getAllPorts() {
-        return topologyController.getAllPorts();
+        return nodeEntityController.getAllPorts();
 
     }
 
     @GetMapping("/topology/port/{uuid}")
     public PortEntity getPortById(@PathVariable String uuid) {
 
-        return topologyController.findPortById(uuid);
+        return nodeEntityController.findPortById(uuid);
     }
 
     @DeleteMapping("/topology/port/{uuid}")
     public Status deletePortById(@PathVariable String uuid) {
-        return topologyController.deletePortById(uuid);
+        return nodeEntityController.deletePortById(uuid);
     }
 
     @GetMapping("/topology/node")
     List<NodeEntity> getAllNodes() {
-        return topologyController.getAllNodes();
+        return nodeEntityController.getAllNodes();
     }
 
 

@@ -11,9 +11,9 @@ import java.util.List;
 
 @Data
 @AllArgsConstructor
-@NoArgsConstructor
+//@NoArgsConstructor
 @RedisHash("Partition")
-public class PartitionEntity implements Serializable {
+public class PartitionEntity extends AbstractEntity implements Serializable {
 
     @Id
     private String UUID;
@@ -21,6 +21,13 @@ public class PartitionEntity implements Serializable {
     private List<String> nodeUUIDList;
     private PartitionManagerStatus partitionManagerStatus;
     private Link0DownPolicy link0DownPolicy;
+
+    public PartitionEntity() {
+    }
+
+    public PartitionEntity(List<String> nodeUUIDList) {
+        this.nodeUUIDList = nodeUUIDList;
+    }
 
     public String getUUID() {
         return UUID;

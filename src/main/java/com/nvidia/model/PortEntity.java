@@ -12,7 +12,7 @@ import java.io.Serializable;
 @AllArgsConstructor
 @NoArgsConstructor
 @RedisHash("Port")
-public class PortEntity implements Serializable {
+public class PortEntity extends AbstractEntity implements Serializable {
 
     @Id
     private String UUID;

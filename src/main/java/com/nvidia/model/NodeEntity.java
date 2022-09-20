@@ -13,7 +13,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @RedisHash("Node")
-public class NodeEntity implements Serializable {
+public class NodeEntity extends AbstractEntity implements Serializable {
 
     @Id
     private String UUID;

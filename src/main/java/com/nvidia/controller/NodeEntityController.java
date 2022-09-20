@@ -10,8 +10,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import static com.nvidia.controller.UUIDGenerator.generateUUID;
+
 @Repository
-public class TopologyController {
+public class NodeEntityController {
 
     @Autowired
     private RedisTemplate redisTemplate;
@@ -50,8 +52,14 @@ public class TopologyController {
         return Status.NON_FATAL_ERROR;
     }
 
+    public NodeEntity findNodeById(String UUID) {
+        return (NodeEntity) redisTemplate.opsForHash().get(HASH_NODE_KEY, UUID);
+    }
 
-    @PostConstruct
+
+
+
+//    @PostConstruct
     private void setup() {
 
         for (PortEntity portEntity : getAllPorts()) {
@@ -62,45 +70,42 @@ public class TopologyController {
             deleteNodeById(ne.getUUID());
         }
 
-        List<PortEntity> portEntities = new ArrayList<>();
+        for (int i = 0; i < 32; i++) {
 
-        PortEntity p = new PortEntity();
-        p.setUUID(generateUUID());
-        p.setName("port1");
-        p.setStatus(OperationStatus.UP);
+            NodeEntity ne = new NodeEntity();
+            ne.setUUID(generateUUID());
+            ne.setName("Node" + i);
+            ne.setNodeType(NodeType.GPU);
+            ne.setPartitionManagerStatus(PartitionManagerStatus.NotReady);
+            ne.setFabricManagerStatus(FabricManagerStatus.UnConfigured);
+            ne.setSubnetManagerStatus(SubnetManagerStatus.UnConfigured);
+            ne.setNodeNetworkStatus(NodeNetworkStatus.OK);
+            ne.setNodeFabricStatus(NodeFabricStatus.OK);
 
-        portEntities.add(p);
-        redisTemplate.opsForHash().put(HASH_PORT_KEY, p.getUUID(), p);
+            List<String> portUUIDList = new ArrayList<>();
+            ne.setPortEntities(portUUIDList);
 
-        p = new PortEntity();
-        p.setUUID(generateUUID());
-        p.setName("port2");
-        p.setStatus(OperationStatus.UP);
 
-        redisTemplate.opsForHash().put(HASH_PORT_KEY, p.getUUID(), p);
-        portEntities.add(p);
+            for (int j = 0; j < 18; j++) {
 
-        NodeEntity ne = new NodeEntity();
-        ne.setUUID(generateUUID());
-        ne.setName("Node1");
-        ne.setNodeType(NodeType.GPU);
+                PortEntity p = new PortEntity();
+                p.setUUID(generateUUID());
+                p.setName("node-" + i + "-port-" + j);
+                p.setStatus(OperationStatus.DOWN);
 
-        List<String> portUUIDList = new ArrayList<>();
+                portUUIDList.add(p.getUUID());
 
-        for (PortEntity portEntity : portEntities) {
-            portUUIDList.add(portEntity.getUUID());
+                redisTemplate.opsForHash().put(HASH_PORT_KEY, p.getUUID(), p);
+
+            }
+
+            redisTemplate.opsForHash().put(HASH_NODE_KEY, ne.getUUID(), ne);
+
+
         }
 
-        ne.setPortEntities(portUUIDList);
-
-        redisTemplate.opsForHash().put(HASH_NODE_KEY, ne.getUUID(), ne);
 
     }
 
-    private String generateUUID() {
-        UUID uuid = UUID.randomUUID();
-        return uuid.toString();
-
-    }
 
 }

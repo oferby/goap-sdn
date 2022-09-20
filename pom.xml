@@ -9,8 +9,8 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
-    <groupId>com.nvidia</groupId>
-    <artifactId>goap</artifactId>
+    <groupId>com.nvidia.sdn</groupId>
+    <artifactId>nib</artifactId>
     <version>1.0-SNAPSHOT</version>
 
     <properties>
