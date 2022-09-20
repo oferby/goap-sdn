@@ -33,7 +33,7 @@ enum PartitionManagerStatus {
 }
 
 enum SubnetManagerStatus {
-  SM_Unconfigured = 0;
+  SM_UnConfigured = 0;
   SM_PartitionConfigOk = 1;
   SM_PendingPartitionConfig = 2;
   SM_PendingBasicConfig = 3;
@@ -44,12 +44,12 @@ enum SubnetManagerStatus {
 }
 
 enum FabricManagerStatus {
-  FM_Unconfigured = 0;
+  FM_UnConfigured = 0;
   FM_PartitionConfigOk = 2;
   FM_PendingPartitionConfig = 3;
   FM_PendingHalt = 4;
   FM_HaltFailed = 5;
-  FM_PendimResume = 6;
+  FM_PendingResume = 6;
   FM_ResumeFailed = 7;
 }
 

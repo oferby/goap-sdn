@@ -16,8 +16,13 @@ public class PortEntity implements Serializable {
 
     @Id
     private String UUID;
-
     private String name;
+    private String neighbor;
+    private OperationStatus status;
+    private int p_key;
+
+
+
 
     public String getUUID() {
         return UUID;
@@ -33,5 +38,21 @@ public class PortEntity implements Serializable {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getNeighbor() {
+        return neighbor;
+    }
+
+    public void setNeighbor(String neighbor) {
+        this.neighbor = neighbor;
+    }
+
+    public OperationStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(OperationStatus status) {
+        this.status = status;
     }
 }
